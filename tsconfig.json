@@ -1,0 +1,15 @@
+{
+  "extends": ["@tsconfig/node18/tsconfig", "@tsconfig/strictest/tsconfig"],
+  "compilerOptions": {
+    "declaration": true,
+    "module": "NodeNext",
+    "exactOptionalPropertyTypes": false,
+    "lib": ["DOM", "ES2023"],
+    "moduleResolution": "nodenext",
+    "noUnusedLocals": false /* This is handled by eslint */,
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "sourceMap": true
+  },
+  "include": ["src", "test"]
+}

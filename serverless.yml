@@ -1,0 +1,36 @@
+service: dmarc-processor
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: dev
+  region: us-east-1
+  logRetentionInDays: 30
+  environment:
+    DB_HOST:
+    DB_USER:
+    DB_PASS:
+    NODE_ENV: ${self:custom.nodeEnv.${opt:stage, self:provider.stage}}
+  timeout: 300
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:*
+          Resource: arn:aws:s3:::${self:custom.bucket}/*
+
+custom:
+  nodeEnv:
+    prod: production
+    dev: development
+  bucket: dazser-dmarc
+
+functions:
+  postprocess:
+    handler: dist/index.default
+    events:
+      - s3:
+          bucket: ${self:custom.bucket}
+          event: s3:ObjectCreated:*
+          existing: true
