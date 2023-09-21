@@ -29,6 +29,7 @@ jobs:
           DB_PASS: ${{ secrets.DB_PASS }}
       - name: Coverage
         if: startsWith(matrix.node-version, '18.')
-        uses: ScaCap/code-coverage-assistant@master
+        uses: Nef10/lcov-reporter-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ env.pr_number }}
