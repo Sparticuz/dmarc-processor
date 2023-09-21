@@ -96,7 +96,7 @@ export interface DmarcFeedback {
       sp: string;
       pct: number;
     };
-    record: dmarcRecord[];
+    record: dmarcRecord | dmarcRecord[];
   };
 }
 
@@ -145,7 +145,13 @@ export const processRecords = async (
   const ipv4Records = [];
   const ipv6Records = [];
 
-  for (const record of records.record) {
+  const payloads =
+    // @ts-expect-error Checking to see if it's iterable and making it iterable if it's not
+    records.record && typeof records.record[Symbol.iterator] === "function"
+      ? records.record
+      : [records.record];
+
+  for (const record of payloads as dmarcRecord[]) {
     // console.log(`Processing ${JSON.stringify(record)}`);
 
     const ipInfo = ipaddr.parse(record.row.source_ip);
