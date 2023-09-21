@@ -1,0 +1,179 @@
+Return-Path: <email@example.org>
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+ by inbound-smtp.us-east-1.amazonaws.com with SMTP id hcbeh51tv4r0l00fv59nej0gqoro351dbmeguc81
+ for dmarc@example.org;
+ Fri, 15 Sep 2023 20:05:01 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of example.org designates 209.85.218.48 as permitted sender) client-ip=209.85.218.48; envelope-from=email@example.org; helo=mail-ej1-f48.google.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of example.org designates 209.85.218.48 as permitted sender) client-ip=209.85.218.48; envelope-from=email@example.org; helo=mail-ej1-f48.google.com;
+ dkim=pass header.i=@example-org.20230601.gappssmtp.com;
+ dmarc=pass header.from=example.org;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFFV04xQ04yN2JESTJDV1dsYnNtVHVrSlcrSTZmRncweXNyaHRwcWxlL2RKQ09wc0lTaGV0MnVHNWtMTVd5b1cyRmJMa25oeEd3SThtMy9mTEROUTFtcUExbnZSV05KWHBtWUFydEdlNEZSYTJ3dnFiWWpSam5SSTRuQTBoZG5GYW41S2dybTFVRGl3ajViMEcxT1NVL1dpZXBkVVZrTjVjWW5oSGUzeGhCRXdpOEFsN1g4N2hwQW1XSjFGYXVVbUFEVnhQUVFnRGk2b1ZIVGFNT2phUTB4Z0tMNE1uc2FNUldFajBtUHZvSVllZnhLWkR4MHJiK1NvQ1dYbTd6amNGYU9PY1FObENnYmdPWmZJR0pieVRqZzBrMlQ2M0dsdmNkR0FEY1FPc2tyN0E9PQ==
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=WQELDfUjC9WUdJF/ItZzbr5p6yQlFE/Zsqy00fwW/udOhI36N/E0i5rOj/IR70x/UgZ61XoUfVirC17Qt8vLXRtpBp7KuPteo1VexAyLIwek/DTe+lS/FJkucZZcp/nb156hGPoiSZhQiGc7PNkXK+WCNi1yaSTLHPdBJWUw+W0=; c=relaxed/simple; s=224i4yxa5dv7c2xz3womw6peuasteono; d=amazonses.com; t=1694808302; v=1; bh=KD5c/kf65EMm4ZlNymoHnG0R3myQfPXPiD3Nc5Wc97o=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-9ad8a822508so309914466b.0
+        for <dmarc@example.org>; Fri, 15 Sep 2023 13:05:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=example-org.20230601.gappssmtp.com; s=20230601; t=1694808300; x=1695413100; darn=example.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MrVWZGMdv46l9dTl2y8ggkWn1Gj+Jy9S+XGXV3DdViY=;
+        b=LifQA5hfvsatZWp6tadvnRuZT+wAU/PjCU/FGxfnEBwqxClOV0fHM5xbt/91rrLcIV
+         Y4QYW8lePmpvOy0W95Mc6lqMs2XFByF8cSpg/ZkBSbCYv8mcN1imtREsb05DJMQ+nE1P
+         cnRrsHb4Is28Ivg7FCs3rjnEevaJN25suS5Zi1WqiL9g+737R7UokIVcQHlC9i+OYD7C
+         17rsLgoIy9mwouVvygdDMZ4OBtdr+clYoa1Tgpq0hnfCHVv6A4nMFdJpSj+2OfdyjpHs
+         EWHrgMNO+XK2wBloAmGU24AjKsUZy9c1hTlmydrXNK47itkgma1Hmq0q32I69fRpC7sN
+         yHQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694808300; x=1695413100;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MrVWZGMdv46l9dTl2y8ggkWn1Gj+Jy9S+XGXV3DdViY=;
+        b=uBZu5p+m/PdnTCXKsPth4ae5Kyt3GRfPXcTskxU1VN9rEqjZayutGd0Sx5NhM0eTuo
+         PAkGP/NB4t+fkwsWgJfsQ04DyAsTmXWSRGkEelSuFozxh8WYqr3+cM200aXmiDYCUCzf
+         3YJSXbmCTD4dnWcgtVNa90xDtQLS1NEMQ4BxC7xMLcstPB6Cc1aBKeHX3zV7Z6svhnz4
+         iHli6niDmqM457LJUsByNQU8S2mh6MtsH9i9XgVjAretvZH9zlJx69+XXbTkAjXMaegB
+         nyeYd4+yJjG1Lr5eEYq68a5Yw67KI1JQ9RRGKiyZcqnmNlNaLa+Qzf9Q2ErGjRlAv5sU
+         UB/g==
+X-Gm-Message-State: AOJu0YxxB55kNGvoY5i1a0qe5DqvGWBUS0vspbF5tnBPzB6h/C+4kPv8
+	U8v6MDwM1bB/vKq3UkkV+z+o4qY7ycqwAgZxF+bgke4AVl7gH87+iAo=
+X-Google-Smtp-Source: AGHT+IEFk4oVsE1F/IIzw6+yN6K9zRiSkAqMHne5Q3YtM06QLz/abkcJoqJvBV1DCIhwAM1lQzfN0RvkBEQUd8GOdfE=
+X-Received: by 2002:a17:906:846c:b0:9a5:c919:55ca with SMTP id
+ hx12-20020a170906846c00b009a5c91955camr2012550ejc.65.1694808299476; Fri, 15
+ Sep 2023 13:04:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <1692529091.356936@dmarc.yahoo.com>
+In-Reply-To: <1692529091.356936@dmarc.yahoo.com>
+From: email McNally <email@example.org>
+Date: Fri, 15 Sep 2023 16:04:47 -0400
+Message-ID: <CABCgeNvzs-o9pOHsXqF4ozSxuQYkM7vAKhXxqCHEJrmKN9o-6Q@mail.gmail.com>
+Subject: Fwd: Report Domain: example.org Submitter: yahoo.com Report-ID: <1692494013.879517>
+To: dmarc@example.org
+Content-Type: multipart/mixed; boundary="000000000000a7438b06056b4e23"
+
+--000000000000a7438b06056b4e23
+Content-Type: multipart/alternative; boundary="000000000000a7438a06056b4e21"
+
+--000000000000a7438a06056b4e21
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+---------- Forwarded message ---------
+From: <noreply@dmarc.yahoo.com>
+Date: Sun, Aug 20, 2023 at 6:58=E2=80=AFAM
+Subject: Report Domain: example.org Submitter: yahoo.com Report-ID:
+<1692494013.879517>
+To: <email@example.org>
+
+
+This is an aggregate DMARC report from Yahoo. Your domain example.org has
+a DMARC record set up. You are receiving this report because your email
+address is included in the 'rua' tag of that domain.  If you no longer wish
+to receive these reports, or if you would like them to be sent to a
+different location, kindly update or remove this record or collaborate with
+your hosting provider.
+
+Please note that this email address is not monitored, and you will not
+receive a response if you reply to this email. For any feedback or
+questions, please reach out to dmarchelp@yahooinc.com.
+
+
+--=20
+
+
+
+--000000000000a7438a06056b4e21
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=
+=3D"gmail_attr">---------- Forwarded message ---------<br>From: <span dir=
+=3D"auto">&lt;<a href=3D"mailto:noreply@dmarc.yahoo.com">noreply@dmarc.yaho=
+o.com</a>&gt;</span><br>Date: Sun, Aug 20, 2023 at 6:58=E2=80=AFAM<br>Subje=
+ct: Report Domain: <a href=3D"http://example.org">example.org</a> Submitt=
+er: <a href=3D"http://yahoo.com">yahoo.com</a> Report-ID: &lt;1692494013.87=
+9517&gt;<br>To:  &lt;<a href=3D"mailto:email@example.org">email@example.org=
+</a>&gt;<br></div><br><br>This is an aggregate DMARC report from Yahoo. You=
+r domain <a href=3D"http://example.org" rel=3D"noreferrer" target=3D"_blan=
+k">example.org</a> has a DMARC record set up. You are receiving this repor=
+t because your email address is included in the &#39;rua&#39; tag of that d=
+omain.=C2=A0 If you no longer wish to receive these reports, or if you woul=
+d like them to be sent to a different location, kindly update or remove thi=
+s record or collaborate with your hosting provider.<br>
+<br>
+Please note that this email address is not monitored, and you will not rece=
+ive a response if you reply to this email. For any feedback or questions, p=
+lease reach out to <a href=3D"mailto:dmarchelp@yahooinc.com" target=3D"_bla=
+nk">dmarchelp@yahooinc.com</a>.</div><br clear=3D"all"><div><br></div><span=
+ class=3D"gmail_signature_prefix">-- </span><br><div dir=3D"ltr" class=3D"g=
+mail_signature" data-smartmail=3D"gmail_signature"><div dir=3D"ltr"><div><t=
+able border=3D"0" cellpadding=3D"0" cellspacing=3D"0" style=3D"margin:0px;p=
+adding:0px;border:0px;outline:0px;font-size:14px;font-family:proxima-nova-1=
+,proxima-nova-2,Tahoma,Helvetica,Verdana,sans-serif;vertical-align:baseline=
+;border-spacing:0px;color:rgb(51,51,51);line-height:18.2000007629395px"><tb=
+ody style=3D"margin:0px;padding:0px;border:0px;outline:0px;font-weight:inhe=
+rit;font-style:inherit;font-family:inherit;vertical-align:baseline"><tr sty=
+le=3D"margin:0px;padding:0px;border:0px;outline:0px;font-weight:inherit;fon=
+t-style:inherit;font-family:inherit;vertical-align:baseline"><td style=3D"p=
+adding:0px;border:0px;outline:0px;font-style:inherit;font-size:0px;font-fam=
+ily:inherit;vertical-align:baseline;width:auto;height:30px">=C2=A0</td></tr=
+><tr style=3D"margin:0px;padding:0px;border:0px;outline:0px;font-weight:inh=
+erit;font-style:inherit;font-family:inherit;vertical-align:baseline"><td st=
+yle=3D"padding:0px;border:0px;outline:0px;font-style:inherit;font-family:in=
+herit;vertical-align:baseline;width:auto"><div style=3D"margin:0px;padding:=
+0px;border:0px;outline:0px;font-weight:inherit;font-style:inherit;font-fami=
+ly:inherit;vertical-align:baseline;line-height:0"><a href=3D"http://about.m=
+e/emailmcnally?promo=3Demail_sig" style=3D"margin:0px;padding:0px;border:0px=
+;outline:0px;font-weight:inherit;font-style:inherit;font-family:inherit;ver=
+tical-align:baseline;color:rgb(43,130,173);text-decoration:none;display:inl=
+ine-block" target=3D"_blank"><table border=3D"0" cellpadding=3D"0" cellspac=
+ing=3D"0" style=3D"margin:0px;padding:0px;border:0px;outline:0px;font-weigh=
+t:inherit;font-style:inherit;font-family:inherit;vertical-align:baseline;bo=
+rder-spacing:0px"><tbody style=3D"margin:0px;padding:0px;border:0px;outline=
+:0px;font-weight:inherit;font-style:inherit;font-family:inherit;vertical-al=
+ign:baseline"><tr style=3D"margin:0px;padding:0px;border:0px;outline:0px;fo=
+nt-weight:inherit;font-style:inherit;font-family:inherit;vertical-align:bas=
+eline"><td align=3D"left" valign=3D"top" style=3D"padding:0px;border:0px;ou=
+tline:0px;font-style:inherit;font-family:inherit;vertical-align:top;width:a=
+uto;line-height:1"><div style=3D"margin:0px;padding:0px;border:0px;outline:=
+0px;font-weight:bold;font-style:inherit;font-size:18px;font-family:proxima-=
+nova-1,Proxima-Nova,Helvetica,Arial,sans-serif;vertical-align:baseline;line=
+-height:1;color:rgb(51,51,51)">email McNally</div></td></tr><tr style=3D"mar=
+gin:0px;padding:0px;border:0px;outline:0px;font-weight:inherit;font-style:i=
+nherit;font-family:inherit;vertical-align:baseline"><td align=3D"left" vali=
+gn=3D"top" style=3D"padding:0px;border:0px;outline:0px;font-style:inherit;f=
+ont-family:inherit;vertical-align:top;width:auto;line-height:1"><div style=
+=3D"margin:3px 0px 0px;padding:0px;border:0px;outline:0px;font-weight:inher=
+it;font-style:inherit;font-size:12px;font-family:proxima-nova-1,Proxima-Nov=
+a,Helvetica,Arial,sans-serif;vertical-align:baseline"><img alt=3D"http://" =
+width=3D"0" height=3D"0" style=3D"margin:0px;padding:0px;border:0px;outline=
+:0px;font-weight:inherit;font-style:inherit;font-family:inherit;vertical-al=
+ign:baseline;display:block;width:0px;height:0px;overflow:hidden">about.me/k=
+ylemcnally</div></td></tr></tbody></table></a>=C2=A0				</div></td></tr><tr=
+ style=3D"margin:0px;padding:0px;border:0px;outline:0px;font-weight:inherit=
+;font-style:inherit;font-family:inherit;vertical-align:baseline"><td style=
+=3D"padding:0px;border:0px;outline:0px;font-style:inherit;font-size:0px;fon=
+t-family:inherit;vertical-align:baseline;width:auto;height:20px">=C2=A0</td=
+></tr></tbody></table></div></div></div></div>
+
+--000000000000a7438a06056b4e21--
+--000000000000a7438b06056b4e23
+Content-Type: application/gzip;
+	name="yahoo.com!example.org!1692403200!1692489599.xml.gz"
+Content-Disposition: attachment;
+	filename="yahoo.com!example.org!1692403200!1692489599.xml.gz"
+Content-Transfer-Encoding: base64
+Content-ID: <18a9a71fc0648e7f0711>
+X-Attachment-Id: 18a9a71fc0648e7f0711
+
+H4sIAAAAAAAAA3VUy3LjIBA8736FK/cVQnYSq4qQ/Y09qTAaWVTEowBlk79fZBBITvZk3NPMdDdT
+Iq8fcjq8g3VCq5cHXNUPr/THTzIA9BfG38L5cCAWjLa+k+BZzzy7gQHW9topJoH+YaPWBOX/qQ6S
+iYn2klk+wmR+fy40oXjFtSQoVhM1TRA9xU9tc2pPNT5W5+f2ET8TVIqJHURAZ5m6rqMCdoGrUPF2
+fWzqmqCIZAKo1PzcPrZtmK9yP3TXMI/cOSZGT4J/dma+TMKNUOToYEVR+GDSTFCFGELHiCUG69+E
+pJageFhRZ4YbuPwmzFClFRBkMsA9xYud5RDFfasjRMi1zZqs/lusOz1bDp0wFLdNhZ+OVXPCFa5P
+BJVSZnM9qzCToHjIeBoL72yaQ159riwRCGe0Ez5sUTKwRbbExf8QXj4wShRRZUghVkoeG7v3c8Mj
+ZY9E9KC8GERY5HJzBNaD7Qar5f5xtoW12dcOhM1+7Cy4efKbrvey96//KwyomrppcFOfqyszxjnp
+TVz53VJEzzAB99rS9Uowv0IbWhRBDVgJ1mq7LOgNKSntZJFtgkWjB+f/p2QdwZz7pvtmQ9GXWBZ+
+2j2CypfjH00k1aRcBAAA
+--000000000000a7438b06056b4e23--
