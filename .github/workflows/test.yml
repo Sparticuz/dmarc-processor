@@ -29,6 +29,6 @@ jobs:
           DB_PASS: ${{ secrets.DB_PASS }}
       - name: Coverage
         if: startsWith(matrix.node-version, '18.')
-        uses: romeovs/lcov-reporter-action@v0.3.1
+        uses: ScaCap/code-coverage-assistant@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
