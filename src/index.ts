@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import ipaddr from "ipaddr.js";
 
 import { getStringFromS3 } from "./aws.s3.js";
-import { gunzipFile, unzipFile } from "./compression.js";
+import { compressString, gunzipFile, unzipFile } from "./compression.js";
 import { pool as database } from "./database.drizzle.js";
 import { inet_aton } from "./inet.js";
 import { parseEmail, parseXml } from "./parser.js";
@@ -132,7 +132,7 @@ export const storeReportInDatabase = async (
     policy_p: record.policy_published.p,
     policy_sp: record.policy_published.sp,
     policy_pct: record.policy_published.pct,
-    raw_xml: xml,
+    raw_xml: await compressString(xml),
   });
 
   return results.insertId;
@@ -238,7 +238,7 @@ export default async (event: AWSLambda.S3Event): Promise<void> => {
       const record = parseXml(singleXml);
 
       // Skip if it's already in the database
-      const isAlreadyInDatabase = checkIfAlreadyStored(
+      const isAlreadyInDatabase = await checkIfAlreadyStored(
         record.feedback.report_metadata.report_id,
       );
 

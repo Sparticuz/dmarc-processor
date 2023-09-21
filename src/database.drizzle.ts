@@ -3,24 +3,24 @@ import { createConnection, createPool } from "mysql2/promise";
 
 import * as schema from "./schema.js";
 
-const poolConnection = createPool({
+const poolConnection = await createPool({
   connectionLimit: 10,
-  database: process.env["DATABASE"],
-  host: process.env["HOST"],
+  database: "dmarc",
+  host: process.env["DB_HOST"],
   multipleStatements: true,
-  password: process.env["PASSWORD"],
-  user: process.env["USER"],
+  password: process.env["DB_PASS"],
+  user: process.env["DB_USER"],
 });
 
 export const pool = drizzle(poolConnection, { schema, mode: "default" });
 
 const connection = await createConnection({
   connectionLimit: 10,
-  database: process.env["DATABASE"],
-  host: process.env["HOST"],
+  database: "dmarc",
+  host: process.env["DB_HOST"],
   multipleStatements: true,
-  password: process.env["PASSWORD"],
-  user: process.env["USER"],
+  password: process.env["DB_PASS"],
+  user: process.env["DB_USER"],
 });
 
 export const single = drizzle(connection, { schema, mode: "default" });

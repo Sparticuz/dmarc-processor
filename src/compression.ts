@@ -15,7 +15,8 @@ export const unzipFile = async (file: Buffer) => {
   const xml = [];
   const unzippedFileBuffer = await Open.buffer(file);
   for (const file of unzippedFileBuffer.files) {
-    xml.push((await file.buffer()).toString());
+    const buffer = await file.buffer();
+    xml.push(buffer.toString());
   }
   return xml;
 };
