@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     strategy:
       matrix:
         node-version: [18.x]
@@ -29,6 +32,6 @@ jobs:
           DB_PASS: ${{ secrets.DB_PASS }}
       - name: Coverage
         if: startsWith(matrix.node-version, '18.')
-        uses: ScaCap/code-coverage-assistant@master
+        uses: romeovs/lcov-reporter-action@v0.3.1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ github.token }}
