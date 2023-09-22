@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     strategy:
       matrix:
         node-version: [18.x]
@@ -30,3 +33,5 @@ jobs:
       - name: Coverage
         if: startsWith(matrix.node-version, '18.')
         uses: romeovs/lcov-reporter-action@v0.3.1
+        with:
+          github-token: ${{ github.token }}
