@@ -145,12 +145,9 @@ export const processRecords = async (
   const ipv6Records = [];
 
   const payloads =
-    // @ts-expect-error Checking to see if it's iterable and making it iterable if it's not
-    records.record && typeof records.record[Symbol.iterator] === "function"
-      ? records.record
-      : [records.record];
+    Symbol.iterator in records.record ? records.record : [records.record];
 
-  for (const record of payloads as dmarcRecord[]) {
+  for (const record of payloads) {
     // console.log(`Processing ${JSON.stringify(record)}`);
 
     const ipInfo = ipaddr.parse(record.row.source_ip);
