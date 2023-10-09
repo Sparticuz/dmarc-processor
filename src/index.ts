@@ -1,10 +1,9 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import ipaddr from "ipaddr.js";
 
 import { getStringFromS3 } from "./aws.s3.js";
 import { compressString, gunzipFile, unzipFile } from "./compression.js";
 import { pool as database } from "./database.drizzle.js";
-import { inet_aton } from "./inet.js";
 import { parseEmail, parseXml } from "./parser.js";
 import { report, rptrecord } from "./schema.js";
 
@@ -158,7 +157,7 @@ export const processRecords = async (
     if (ipInfo.kind() === "ipv4") {
       ipv4Records.push({
         serial: reportId,
-        ip: inet_aton(record.row.source_ip),
+        ip: sql`INET_ATON(${record.row.source_ip})`,
         rcount: record.row.count,
         disposition: record.row.policy_evaluated.disposition,
         spf_align: record.row.policy_evaluated.spf ?? "unknown",
@@ -173,7 +172,7 @@ export const processRecords = async (
     } else {
       ipv6Records.push({
         serial: reportId,
-        ip6: null,
+        ip6: sql`INET6_ATON(${record.row.source_ip})`,
         rcount: record.row.count,
         disposition: record.row.policy_evaluated.disposition,
         spf_align: record.row.policy_evaluated.spf ?? "unknown",
