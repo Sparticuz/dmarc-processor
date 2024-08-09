@@ -1,15 +1,18 @@
 {
-  "extends": ["@tsconfig/node18/tsconfig", "@tsconfig/strictest/tsconfig"],
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Base Default TSConfig",
+  "extends": ["@tsconfig/node20/tsconfig", "@tsconfig/strictest/tsconfig"],
   "compilerOptions": {
     "declaration": true,
-    "module": "NodeNext",
+    "declarationMap": true,
     "exactOptionalPropertyTypes": false,
-    "lib": ["DOM", "ES2023"],
+    "lib": ["DOM", "ES2021.String", "ES2023"],
+    "module": "NodeNext",
     "moduleResolution": "nodenext",
     "noUnusedLocals": false /* This is handled by eslint */,
     "outDir": "dist",
     "resolveJsonModule": true,
     "sourceMap": true
   },
-  "include": ["src", "test"]
+  "include": ["src", "test", "drizzle.config.ts", "vitest.config.ts"]
 }
