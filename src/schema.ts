@@ -1,33 +1,16 @@
 import {
   binary,
-  customType,
   index,
+  int,
   mediumtext,
   mysqlEnum,
   mysqlTable,
   serial,
   timestamp,
+  tinyint,
   uniqueIndex,
   varchar,
 } from "drizzle-orm/mysql-core";
-
-const unsignedBigint = customType<{ data: number }>({
-  dataType() {
-    return "bigint UNSIGNED";
-  },
-});
-
-const unsignedTinyint = customType<{ data: number }>({
-  dataType() {
-    return "tinyint UNSIGNED";
-  },
-});
-
-const unsignedInt = customType<{ data: number }>({
-  dataType() {
-    return "int UNSIGNED";
-  },
-});
 
 export const report = mysqlTable(
   "report",
@@ -44,8 +27,8 @@ export const report = mysqlTable(
     policy_adkim: varchar("policy_adkim", { length: 20 }),
     policy_aspf: varchar("policy_aspf", { length: 20 }),
     policy_p: varchar("policy_p", { length: 20 }),
+    policy_pct: tinyint("policy_pct", { unsigned: true }),
     policy_sp: varchar("policy_sp", { length: 20 }),
-    policy_pct: unsignedTinyint("policy_pct"),
     raw_xml: mediumtext("raw_xml"),
     reportid: varchar("reportid", { length: 255 }).notNull(),
     serial: serial("serial"),
@@ -60,11 +43,6 @@ export const report = mysqlTable(
 export const rptrecord = mysqlTable(
   "rptrecord",
   {
-    serial: unsignedBigint("serial")
-      .notNull()
-      .references(() => report.serial, { onDelete: "cascade" }),
-    ip: unsignedInt("ip"),
-    rcount: unsignedInt("rcount").notNull(),
     disposition: mysqlEnum("disposition", [
       "none",
       "quarantine",
@@ -85,7 +63,9 @@ export const rptrecord = mysqlTable(
     ]),
     id: serial("id"),
     identifier_hfrom: varchar("identifier_hfrom", { length: 255 }),
+    ip: int("ip", { unsigned: true }),
     ip6: binary("ip6"),
+    rcount: int("rcount", { unsigned: true }).notNull(),
     reason: varchar("reason", { length: 255 }),
     serial: serial("serial")
       .notNull()
