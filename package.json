@@ -19,7 +19,7 @@
     "@tsconfig/strictest": "^2.0.5",
     "@types/aws-lambda": "^8.10.143",
     "@types/mailparser": "^3.4.4",
-    "@types/node": "^20.14.14",
+    "@types/node": "^22.1.0",
     "@types/unzipper": "^0.10.10",
     "@vitest/coverage-v8": "^2.0.5",
     "drizzle-kit": "^0.24.0",
