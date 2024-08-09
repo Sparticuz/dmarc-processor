@@ -2,7 +2,7 @@
 
 This serverless function will process DMARC records that are sent through Amazon SES and saved to S3.
 
-## How to set AWS
+## How to set up DMARC receiving in AWS
 
 1. Set up a bucket
    1. Set up S3 Permissions for SES
@@ -47,9 +47,19 @@ This serverless function will process DMARC records that are sent through Amazon
       1. Download it and open it with text editor
       2. Open link in the document to verify the email account
 
-## How to setup DMARC Reporting
+## How to setup DMARC Reporting in your DNS Provider
 
 1. Enable DKIM and SPF on your domain
 2. Generate a DMARC txt record (https://dmarcian.com/dmarc-record-wizard/)
    1. RUA Address = `mailto:**THE ADDRESS FROM STEP 4.1**`
 3. Add DNS record to your DNS provider.
+
+## How to setup reporting
+
+- TODO
+
+## TODO
+
+- Can record.policy_published be an array?
+- Is there a way to validate the enums in TS before insert?
+- Can DKIM & SPF be for multiple domains?

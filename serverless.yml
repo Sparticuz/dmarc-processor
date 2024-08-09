@@ -2,7 +2,7 @@ service: dmarc-processor
 
 provider:
   name: aws
-  runtime: nodejs18.x
+  runtime: nodejs20.x
   stage: dev
   region: us-east-1
   logRetentionInDays: 30

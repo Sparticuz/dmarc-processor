@@ -1,4 +1,6 @@
 import { eq, sql } from "drizzle-orm";
+// This is actually a package name
+// eslint-disable-next-line n/no-missing-import
 import ipaddr from "ipaddr.js";
 
 import { getStringFromS3 } from "./aws.s3.js";
@@ -50,18 +52,6 @@ enum ALLOWED_SPFRESULT {
 }
 
 interface dmarcRecord {
-  row: {
-    source_ip: string;
-    count: number;
-    policy_evaluated: {
-      disposition: ALLOWED_DISPOSITION;
-      dkim: ALLOWED_DKIM_ALIGN;
-      spf: ALLOWED_SPF_ALIGN;
-    };
-  };
-  identifiers: {
-    header_from: string;
-  };
   auth_results: {
     dkim?: {
       domain: string;
@@ -73,29 +63,43 @@ interface dmarcRecord {
       result: ALLOWED_SPFRESULT;
     };
   };
+  identifiers: {
+    header_from: string;
+  };
+  row: {
+    count: number;
+    policy_evaluated: {
+      disposition: ALLOWED_DISPOSITION;
+      dkim: ALLOWED_DKIM_ALIGN;
+      spf: ALLOWED_SPF_ALIGN;
+    };
+    source_ip: string;
+  };
 }
 
 export interface DmarcFeedback {
   feedback: {
+    policy_published: {
+      // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+      adkim: "r" | string;
+      // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+      aspf: "r" | string;
+      domain: string;
+      p: string;
+      pct: number;
+      sp: string;
+    };
+    record: dmarcRecord | dmarcRecord[];
     report_metadata: {
-      org_name: string;
-      email: string;
-      extra_contact_info: string;
-      report_id: string;
       date_range: {
         begin: number;
         end: number;
       };
+      email: string;
+      extra_contact_info: string;
+      org_name: string;
+      report_id: string;
     };
-    policy_published: {
-      domain: string;
-      adkim: "r" | string;
-      aspf: "r" | string;
-      p: string;
-      sp: string;
-      pct: number;
-    };
-    record: dmarcRecord | dmarcRecord[];
   };
 }
 
@@ -107,11 +111,7 @@ export const checkIfAlreadyStored = async (
     .from(report)
     .where(eq(report.reportid, reportid));
 
-  if (result.length > 0) {
-    return true;
-  }
-
-  return false;
+  return result.length > 0;
 };
 
 export const storeReportInDatabase = async (
@@ -119,19 +119,19 @@ export const storeReportInDatabase = async (
   xml: string,
 ): Promise<number> => {
   const [results] = await database.insert(report).values({
-    mindate: new Date(record.report_metadata.date_range.begin * 1000),
-    maxdate: new Date(record.report_metadata.date_range.end * 1000),
     domain: record.policy_published.domain,
-    org: record.report_metadata.org_name,
-    reportid: record.report_metadata.report_id,
     email: record.report_metadata.email,
     extra_contact_info: record.report_metadata.extra_contact_info,
+    maxdate: new Date(record.report_metadata.date_range.end * 1000),
+    mindate: new Date(record.report_metadata.date_range.begin * 1000),
+    org: record.report_metadata.org_name,
     policy_adkim: record.policy_published.adkim,
     policy_aspf: record.policy_published.aspf,
     policy_p: record.policy_published.p,
-    policy_sp: record.policy_published.sp,
     policy_pct: record.policy_published.pct,
+    policy_sp: record.policy_published.sp,
     raw_xml: await compressString(xml),
+    reportid: record.report_metadata.report_id,
   });
 
   return results.insertId;
@@ -153,33 +153,37 @@ export const processRecords = async (
     const ipInfo = ipaddr.parse(record.row.source_ip);
     if (ipInfo.kind() === "ipv4") {
       ipv4Records.push({
-        serial: reportId,
-        ip: sql`INET_ATON(${record.row.source_ip})`,
-        rcount: record.row.count,
         disposition: record.row.policy_evaluated.disposition,
-        spf_align: record.row.policy_evaluated.spf ?? "unknown",
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         dkim_align: record.row.policy_evaluated.dkim ?? "unknown",
-        reason: null,
         dkimdomain: record.auth_results.dkim?.domain ?? null,
         dkimresult: record.auth_results.dkim?.result ?? null,
+        identifier_hfrom: record.identifiers.header_from,
+        ip: sql`INET_ATON(${record.row.source_ip})`,
+        rcount: record.row.count,
+        reason: null,
+        serial: reportId,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        spf_align: record.row.policy_evaluated.spf ?? "unknown",
         spfdomain: record.auth_results.spf.domain,
         spfresult: record.auth_results.spf.result,
-        identifier_hfrom: record.identifiers.header_from,
       });
     } else {
       ipv6Records.push({
-        serial: reportId,
-        ip6: sql`INET6_ATON(${record.row.source_ip})`,
-        rcount: record.row.count,
         disposition: record.row.policy_evaluated.disposition,
-        spf_align: record.row.policy_evaluated.spf ?? "unknown",
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         dkim_align: record.row.policy_evaluated.dkim ?? "unknown",
-        reason: null,
         dkimdomain: record.auth_results.dkim?.domain ?? null,
         dkimresult: record.auth_results.dkim?.result ?? null,
+        identifier_hfrom: record.identifiers.header_from,
+        ip6: sql`INET6_ATON(${record.row.source_ip})`,
+        rcount: record.row.count,
+        reason: null,
+        serial: reportId,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        spf_align: record.row.policy_evaluated.spf ?? "unknown",
         spfdomain: record.auth_results.spf.domain,
         spfresult: record.auth_results.spf.result,
-        identifier_hfrom: record.identifiers.header_from,
       });
     }
   }
@@ -190,7 +194,7 @@ export const processRecords = async (
         await database.insert(rptrecord).values(ipv4Records)
       : undefined,
     ipv6Records.length > 0
-      ? // @ts-expect-error it works
+      ? // @ts-expect-error it works, i think this is from the enums
         await database.insert(rptrecord).values(ipv6Records)
       : undefined,
   ];
@@ -201,7 +205,7 @@ export const processRecords = async (
 };
 
 /* c8 ignore start */
-export default async (event: AWSLambda.S3Event): Promise<void> => {
+const index = async (event: AWSLambda.S3Event): Promise<void> => {
   console.log(JSON.stringify(event));
   for (const record of event.Records) {
     // record
@@ -256,4 +260,5 @@ export default async (event: AWSLambda.S3Event): Promise<void> => {
     }
   }
 };
+export default index;
 /* c8 ignore end */
