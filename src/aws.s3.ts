@@ -25,5 +25,5 @@ export const getStringFromS3 = async (
   if (!file.Body) {
     throw new Error("No Body");
   }
-  return file.Body?.transformToString();
+  return file.Body.transformToString();
 };

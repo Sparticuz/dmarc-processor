@@ -32,23 +32,23 @@ const unsignedInt = customType<{ data: number }>({
 export const report = mysqlTable(
   "report",
   {
-    serial: serial("serial"),
+    domain: varchar("domain", { length: 255 }).notNull(),
+    email: varchar("email", { length: 255 }),
+    extra_contact_info: varchar("extra_contact_info", { length: 255 }),
+    maxdate: timestamp("maxdate"),
     mindate: timestamp("mindate", { mode: "date" })
       .notNull()
       .defaultNow()
       .onUpdateNow(),
-    maxdate: timestamp("maxdate"),
-    domain: varchar("domain", { length: 255 }).notNull(),
     org: varchar("org", { length: 255 }).notNull(),
-    reportid: varchar("reportid", { length: 255 }).notNull(),
-    email: varchar("email", { length: 255 }),
-    extra_contact_info: varchar("extra_contact_info", { length: 255 }),
     policy_adkim: varchar("policy_adkim", { length: 20 }),
     policy_aspf: varchar("policy_aspf", { length: 20 }),
     policy_p: varchar("policy_p", { length: 20 }),
     policy_sp: varchar("policy_sp", { length: 20 }),
     policy_pct: unsignedTinyint("policy_pct"),
     raw_xml: mediumtext("raw_xml"),
+    reportid: varchar("reportid", { length: 255 }).notNull(),
+    serial: serial("serial"),
   },
   (report) => ({
     domainIndex: uniqueIndex("domain_idx")
@@ -60,12 +60,10 @@ export const report = mysqlTable(
 export const rptrecord = mysqlTable(
   "rptrecord",
   {
-    id: serial("id"),
     serial: unsignedBigint("serial")
       .notNull()
       .references(() => report.serial, { onDelete: "cascade" }),
     ip: unsignedInt("ip"),
-    ip6: binary("ip6"),
     rcount: unsignedInt("rcount").notNull(),
     disposition: mysqlEnum("disposition", [
       "none",
@@ -73,7 +71,7 @@ export const rptrecord = mysqlTable(
       "reject",
       "unknown",
     ]),
-    reason: varchar("reason", { length: 255 }),
+    dkim_align: mysqlEnum("dkim_align", ["fail", "pass", "unknown"]).notNull(),
     dkimdomain: varchar("dkimdomain", { length: 255 }),
     dkimresult: mysqlEnum("dkimresult", [
       "none",
@@ -85,6 +83,14 @@ export const rptrecord = mysqlTable(
       "permerror",
       "unknown",
     ]),
+    id: serial("id"),
+    identifier_hfrom: varchar("identifier_hfrom", { length: 255 }),
+    ip6: binary("ip6"),
+    reason: varchar("reason", { length: 255 }),
+    serial: serial("serial")
+      .notNull()
+      .references(() => report.serial, { onDelete: "cascade" }),
+    spf_align: mysqlEnum("spf_align", ["fail", "pass", "unknown"]).notNull(),
     spfdomain: varchar("spfdomain", { length: 255 }),
     spfresult: mysqlEnum("spfresult", [
       "none",
@@ -96,16 +102,13 @@ export const rptrecord = mysqlTable(
       "permerror",
       "unknown",
     ]),
-    spf_align: mysqlEnum("spf_align", ["fail", "pass", "unknown"]).notNull(),
-    dkim_align: mysqlEnum("dkim_align", ["fail", "pass", "unknown"]).notNull(),
-    identifier_hfrom: varchar("identifier_hfrom", { length: 255 }),
   },
   (rptrecord) => ({
-    serialIndex: index("serial_idx")
-      .on(rptrecord.serial, rptrecord.ip)
-      .using("btree"),
     serial6Index: index("serial6_idx")
       .on(rptrecord.serial, rptrecord.ip6)
+      .using("btree"),
+    serialIndex: index("serial_idx")
+      .on(rptrecord.serial, rptrecord.ip)
       .using("btree"),
   }),
 );

@@ -1,6 +1,5 @@
 import { promisify } from "node:util";
 import { gunzip, gzip } from "node:zlib";
-
 import { Open } from "unzipper";
 
 export const gzipPromise = promisify(gzip);
