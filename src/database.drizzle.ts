@@ -6,10 +6,10 @@ import * as schema from "./schema.js";
 const poolConnection = createPool({
   connectionLimit: 10,
   database: "dmarc",
-  host: process.env["DB_HOST"],
+  host: process.env.DB_HOST,
   multipleStatements: true,
-  password: process.env["DB_PASS"],
-  user: process.env["DB_USER"],
+  password: process.env.DB_PASS,
+  user: process.env.DB_USER,
 });
 
 export const pool = drizzle(poolConnection, { mode: "default", schema });
@@ -17,10 +17,10 @@ export const pool = drizzle(poolConnection, { mode: "default", schema });
 const connection = await createConnection({
   connectionLimit: 10,
   database: "dmarc",
-  host: process.env["DB_HOST"],
+  host: process.env.DB_HOST,
   multipleStatements: true,
-  password: process.env["DB_PASS"],
-  user: process.env["DB_USER"],
+  password: process.env.DB_PASS,
+  user: process.env.DB_USER,
 });
 
 export const single = drizzle(connection, { mode: "default", schema });

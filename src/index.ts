@@ -22,12 +22,6 @@ enum ALLOWED_DKIM_ALIGN {
   "unknown",
 }
 
-enum ALLOWED_SPF_ALIGN {
-  "fail",
-  "pass",
-  "unknown",
-}
-
 enum ALLOWED_DKIMRESULT {
   "none",
   "pass",
@@ -37,6 +31,12 @@ enum ALLOWED_DKIMRESULT {
   "policy",
   "temperror",
   "permerror",
+  "unknown",
+}
+
+enum ALLOWED_SPF_ALIGN {
+  "fail",
+  "pass",
   "unknown",
 }
 
@@ -51,7 +51,33 @@ enum ALLOWED_SPFRESULT {
   "unknown",
 }
 
-interface dmarcRecord {
+export interface DmarcFeedback {
+  feedback: {
+    policy_published: {
+      // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+      adkim: "r" | string;
+      // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+      aspf: "r" | string;
+      domain: string;
+      p: string;
+      pct: number;
+      sp: string;
+    };
+    record: DmarcRecord | DmarcRecord[];
+    report_metadata: {
+      date_range: {
+        begin: number;
+        end: number;
+      };
+      email: string;
+      extra_contact_info: string;
+      org_name: string;
+      report_id: string;
+    };
+  };
+}
+
+interface DmarcRecord {
   auth_results: {
     dkim?: {
       domain: string;
@@ -74,32 +100,6 @@ interface dmarcRecord {
       spf: ALLOWED_SPF_ALIGN;
     };
     source_ip: string;
-  };
-}
-
-export interface DmarcFeedback {
-  feedback: {
-    policy_published: {
-      // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-      adkim: "r" | string;
-      // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-      aspf: "r" | string;
-      domain: string;
-      p: string;
-      pct: number;
-      sp: string;
-    };
-    record: dmarcRecord | dmarcRecord[];
-    report_metadata: {
-      date_range: {
-        begin: number;
-        end: number;
-      };
-      email: string;
-      extra_contact_info: string;
-      org_name: string;
-      report_id: string;
-    };
   };
 }
 

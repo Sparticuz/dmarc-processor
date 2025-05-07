@@ -33,11 +33,11 @@ export const report = mysqlTable(
     reportid: varchar("reportid", { length: 255 }).notNull(),
     serial: serial("serial"),
   },
-  (report) => ({
-    domainIndex: uniqueIndex("domain_idx")
+  (report) => [
+    uniqueIndex("domain_idx")
       .on(report.domain, report.org, report.reportid)
       .using("btree"),
-  }),
+  ],
 );
 
 export const rptrecord = mysqlTable(
@@ -83,12 +83,8 @@ export const rptrecord = mysqlTable(
       "unknown",
     ]),
   },
-  (rptrecord) => ({
-    serial6Index: index("serial6_idx")
-      .on(rptrecord.serial, rptrecord.ip6)
-      .using("btree"),
-    serialIndex: index("serial_idx")
-      .on(rptrecord.serial, rptrecord.ip)
-      .using("btree"),
-  }),
+  (rptrecord) => [
+    index("serial6_idx").on(rptrecord.serial, rptrecord.ip6).using("btree"),
+    index("serial_idx").on(rptrecord.serial, rptrecord.ip).using("btree"),
+  ],
 );

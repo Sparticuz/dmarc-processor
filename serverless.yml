@@ -2,14 +2,14 @@ service: dmarc-processor
 
 provider:
   name: aws
-  runtime: nodejs20.x
+  runtime: nodejs22.x
   stage: dev
   region: us-east-1
   logRetentionInDays: 30
   environment:
-    DB_HOST:
-    DB_USER:
-    DB_PASS:
+    DB_HOST: ${ssm:/api/sql/host}
+    DB_USER: ${ssm:/api/sql/user}
+    DB_PASS: ${ssm:/api/sql/pass}
     NODE_ENV: ${self:custom.nodeEnv.${opt:stage, self:provider.stage}}
   timeout: 300
   iam:

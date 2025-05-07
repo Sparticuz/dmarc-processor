@@ -1,7 +1,7 @@
 import {
   GetObjectCommand,
-  GetObjectCommandOutput,
   S3Client,
+  type GetObjectCommandOutput,
 } from "@aws-sdk/client-s3";
 
 const s3 = new S3Client({});

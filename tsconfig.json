@@ -1,18 +1,26 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Base Default TSConfig",
-  "extends": ["@tsconfig/node20/tsconfig", "@tsconfig/strictest/tsconfig"],
+  "extends": ["@tsconfig/node22/tsconfig", "@tsconfig/strictest/tsconfig"],
   "compilerOptions": {
+    /* Base Options */
+    "target": "ES2022",
+
     "declaration": true,
     "declarationMap": true,
+
+    /* Strictness */
     "exactOptionalPropertyTypes": false,
-    "lib": ["DOM", "ES2021.String", "ES2023"],
-    "module": "NodeNext",
-    "moduleResolution": "nodenext",
-    "noUnusedLocals": false /* This is handled by eslint */,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "verbatimModuleSyntax": true,
+
     "outDir": "dist",
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "sourceMap": true
   },
+
   "include": ["src", "test", "drizzle.config.ts", "vitest.config.ts"]
 }
