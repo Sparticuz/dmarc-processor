@@ -1,6 +1,6 @@
 {
   "name": "dmarc-processor",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Processes mail files from S3 and inserts the DMARC data into a database",
   "main": "dist/index.js",
   "type": "module",
